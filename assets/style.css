@@ -1,0 +1,128 @@
+/* Auto-loaded by Dash from the ./assets folder (same look as the NSBI Smart Building Mapping app) */
+:root {
+  --accent: #1f4e79;
+  --accent-2: #2e75b6;
+  --bg: #f3f5f9;
+  --card: #ffffff;
+  --text: #1a1a2e;
+  --muted: #5d6675;
+  --border: #dfe3ea;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); }
+
+/* Navigation */
+.navbar { position: sticky; top: 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between;
+          flex-wrap: wrap; gap: 8px; padding: 10px 24px; background: var(--accent); color: #fff;
+          box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+.navbar .brand { font-weight: 600; font-size: 1.1rem; letter-spacing: .2px; }
+.navbar nav { display: flex; gap: 18px; flex-wrap: wrap; }
+.nav-link { color: #fff; text-decoration: none; opacity: .85; padding: 4px 2px; border-bottom: 2px solid transparent; }
+.nav-link:hover { opacity: 1; border-bottom-color: #fff; }
+.nav-right { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.nav-logos { display: flex; align-items: center; gap: 10px; padding-left: 20px; border-left: 1px solid rgba(255,255,255,.35); }
+.nav-logo { height: 40px; width: auto; display: block; border-radius: 4px; box-shadow: 0 0 0 1px rgba(255,255,255,.35); }
+@media (max-width: 700px) { .nav-logos { padding-left: 0; border-left: none; } .nav-logo { height: 30px; } }
+
+.container { max-width: 1400px; margin: 0 auto; padding: 16px 24px 48px; }
+.page-head h1 { margin: 8px 0 4px; font-size: 1.7rem; }
+.page-head p { margin: 0 0 16px; color: var(--muted); }
+
+/* Cards and grids */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+        margin-bottom: 18px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+.card-title { margin: 0 0 4px; font-size: 1.15rem; color: var(--accent); }
+.card-subtitle { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 12px; }
+.grid-5 { display: grid; grid-template-columns: 1.1fr repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 12px; }
+.grid-2 > .card { margin-bottom: 0; }
+.grid-2 + .grid-2, .grid-2 + .card, .card + .grid-2 { margin-top: 18px; }
+@media (max-width: 1000px) { .grid-4, .grid-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grid-2 { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .grid-4, .grid-5 { grid-template-columns: 1fr; } .container { padding: 12px 16px 32px; } }
+
+.control-label { display: block; font-size: .82rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+.control-label[title] { cursor: help; }
+.range-block { padding: 4px 4px 22px; }
+.filter-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+.checklist label, .radio label { margin-right: 14px; font-size: .9rem; }
+.radio { padding-top: 6px; }
+
+/* KPIs */
+.kpi-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+@media (max-width: 800px) { .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.kpi { cursor: help; background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--accent-2);
+       border-radius: 10px; padding: 12px 16px; }
+.kpi-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); }
+.kpi-value { font-size: 1.6rem; font-weight: 600; margin-top: 2px; }
+.kpi-sub { font-size: .85rem; color: var(--muted); }
+
+/* Buttons, inputs, misc */
+.btn { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 7px 14px; cursor: pointer; font-size: .9rem; }
+.btn:hover { background: var(--accent-2); }
+.btn-small { padding: 3px 10px; font-size: .8rem; margin-left: 10px; }
+.muted { color: var(--muted); font-size: .9rem; }
+
+/* Dynamic filters */
+.filters-grid { align-items: start; margin-bottom: 8px; }
+/* Category and numeric rows share the same fixed height so dropdowns, sliders and the "+ Add" buttons
+   line up across the two columns. */
+.filter-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) 34px; gap: 10px;
+              align-items: start; height: 64px; margin-bottom: 6px; }
+.filter-row .btn-icon { margin-top: 3px; }
+.filter-row .range-block { padding: 11px 6px 0; }
+.btn-light { background: transparent; color: var(--accent); border: 1px dashed var(--accent); border-radius: 6px;
+             padding: 5px 12px; cursor: pointer; font-size: .88rem; }
+.btn-light:hover { background: #eef3fa; }
+.btn-icon { width: 30px; height: 30px; border: 1px solid var(--border); background: #fff; color: var(--muted);
+            border-radius: 6px; cursor: pointer; font-size: .9rem; line-height: 1; }
+.btn-icon:hover { color: #c0392b; border-color: #c0392b; }
+
+/* Selection panel below the map, comparison status */
+.selected-panel { margin-top: 6px; padding: 6px 10px; background: #eef3fa; border-radius: 6px; font-size: .85rem; }
+.selected-panel ul { margin: 4px 0 0; padding-left: 18px; }
+.selected-panel li { margin: 3px 0; }
+.link-strong { font-weight: 600; color: var(--accent); margin-left: 8px; }
+.cmp-status { font-size: .88rem; color: var(--muted); }
+.table-toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 10px; }
+.search { flex: 1; min-width: 200px; max-width: 420px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: .95rem; }
+
+/* Tables */
+.info-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.info-table th, .info-table td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+.info-table th { color: var(--muted); font-weight: 600; width: 34%; }
+.table-scroll { overflow-x: auto; }
+
+/* Compare page */
+.compare-table th { width: auto; min-width: 170px; }
+.compare-table td { min-width: 160px; }
+.compare-table thead th { color: var(--accent); background: #f7f9fc; position: sticky; top: 0; }
+.compare-table .group-row th { background: #eef3fa; color: var(--accent); font-size: .85rem; text-transform: uppercase;
+                               letter-spacing: .4px; }
+.compare-table tr.diff th { border-left: 3px solid var(--accent-2); }
+.compare-table th[title] { cursor: help; }
+.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+.matrix-table th { width: auto; }
+.matrix-table td { text-align: center; }
+.matrix-table td.yes { color: var(--accent); font-weight: 700; background: #eef3fa; }
+.matrix-table td.count { color: var(--muted); font-size: .85rem; }
+.matrix-table thead th { text-align: center; }
+.matrix-table thead th:first-child { text-align: left; }
+.matrix-table tbody th[title] { cursor: help; }
+
+/* Hover descriptions: AG Grid header tooltips keep line breaks and wrap */
+.ag-tooltip { white-space: pre-line; max-width: 460px; line-height: 1.35; }
+.opt-label { display: inline-block; width: 100%; }
+
+/* About page: dataset variables and vocabulary */
+.var-group { margin: 10px 0 14px; }
+.var-group > summary { cursor: pointer; font-weight: 600; color: var(--accent); padding: 4px 0; }
+.var-group > p { margin: 4px 0 8px; }
+.vars-table th, .vars-table td { font-size: .86rem; }
+.vars-table th { width: auto; }
+.vars-table td:first-child { font-weight: 600; white-space: nowrap; }
+.vars-table code { font-size: .8rem; color: var(--muted); }
+
+/* About page: centred NSBI logo at the end of the app presentation */
+.about-logo { text-align: center; margin: 18px 0 4px; }
+.about-logo img { height: 110px; width: auto; }
