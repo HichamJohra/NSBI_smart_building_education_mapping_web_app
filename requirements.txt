@@ -1,8 +1,10 @@
-dash>=3.0
-dash-ag-grid>=33.3  # row selection API with checkboxes (rowSelection object), used on the Overview table
-plotly>=5.24
-pandas>=2.2
-numpy>=1.26
-openpyxl>=3.1
-defusedxml>=0.7  # used automatically by openpyxl: safe parsing of Excel files
-gunicorn>=22.0  # production web server (used in the Docker image, Linux)
+# Exact versions tested locally (PyCharm .venv, Python 3.13) so the Docker image is reproducible.
+# To upgrade: update in the .venv, test, then copy the new versions here (pip freeze).
+dash==4.5.0
+dash-ag-grid==35.3.0  # row selection API with checkboxes (rowSelection object), used on the Overview table
+plotly==7.1.0
+pandas==3.1.0
+numpy==2.5.4
+openpyxl==3.1.5
+defusedxml==0.7.1  # used automatically by openpyxl: safe parsing of Excel files
+gunicorn==26.2.0  # production web server (used in the Docker image, Linux)
