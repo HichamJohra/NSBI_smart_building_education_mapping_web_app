@@ -76,4 +76,15 @@ models.
 
 ## Current content
 
-Empty template: no offers yet.
+7 offers in Denmark and Norway (checked 2026-11-09, from official web pages and course catalogues; DK-004
+was removed and its ID is not reused):
+
+| ID | Offer | Institution |
+|---|---|---|
+| DK-001 | Energy management with embedded systems (46035), bachelor course | DTU, Lyngby |
+| DK-002 | MSc Sustainable Energy Systems – specialisation Energy-efficient Building Systems | DTU, Lyngby |
+| DK-003 | High performance buildings (41463), master course (part of DK-002) | DTU, Lyngby |
+| DK-005 | Control and Analysis of Building Energy Systems (B-BED-K3-14), MSc Building Energy Design course | AAU, Aalborg |
+| DK-006 | Advanced Control for Building Applications (B-EVU-ACB-26), continuing education | AAU, Copenhagen |
+| DK-007 | IoT and Cloud based energy solutions (T610032101), status unknown (last description 2022) | SDU, Odense |
+| NO-001 | Systematic fault detection and optimisation of ventilation systems, half-day course (last held September 2025) | SINTEF Community, Oslo |
