@@ -7,6 +7,9 @@ technologies, from an embedded Excel dataset. Companion of the
 [NSBI Smart Building Mapping](https://github.com/HichamJohra/NSBI_smart_building_mapping_web_app) web app
 (same structure and style).
 
+**Live app:** <https://nsbi-smart-building-education-mapping.cloud.run> (Google Cloud Run, redeployed automatically
+from the `main` branch; see `docs/deployment.md`).
+
 ## Run locally
 
 ```bash
