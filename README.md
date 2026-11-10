@@ -62,6 +62,6 @@ Regenerate it after code changes:
 To add an offer, add a row to `courses`. To add a parameter, add a column to `courses` and a row to
 `data_dictionary`. Refresh the browser: the file is re-read automatically when it changes.
 
-Current content: 7 offers in Denmark (DTU, Aalborg University, University of Southern Denmark) and Norway
-(SINTEF); see
+Current content: 10 offers in Denmark (DTU, Aalborg University, University of Southern Denmark), Norway
+(SINTEF) and Estonia (TalTech); see
 `docs/data_model.md`.
