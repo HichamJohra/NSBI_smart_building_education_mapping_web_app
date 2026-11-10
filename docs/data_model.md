@@ -76,8 +76,8 @@ models.
 
 ## Current content
 
-7 offers in Denmark and Norway (checked 2026-11-09, from official web pages and course catalogues; DK-004
-was removed and its ID is not reused):
+10 offers in Denmark, Norway and Estonia (checked 2026-11-09/10, from official web pages and course catalogues;
+DK-004 was removed and its ID is not reused):
 
 | ID | Offer | Institution |
 |---|---|---|
@@ -88,3 +88,6 @@ was removed and its ID is not reused):
 | DK-006 | Advanced Control for Building Applications (B-EVU-ACB-26), continuing education | AAU, Copenhagen |
 | DK-007 | IoT and Cloud based energy solutions (T610032101), status unknown (last description 2022) | SDU, Odense |
 | NO-001 | Systematic fault detection and optimisation of ventilation systems, half-day course (last held September 2025) | SINTEF Community, Oslo |
+| EE-001 | Building automation and HVAC (Hooneautomaatika ja tehnosüsteemid), 18 ECTS micro-credential, in Estonian | TalTech, Tallinn |
+| EE-002 | Buildings' electricity and automation technology (Hoonete elektri- ja automaatikatehnika), 24 ECTS micro-credential, in Estonian | TalTech, Tallinn |
+| EE-003 | MSc Hardware Development and Programming (IACM23), with a building automation study path, in Estonian | TalTech, Tallinn |
