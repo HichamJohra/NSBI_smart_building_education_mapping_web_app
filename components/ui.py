@@ -1,4 +1,5 @@
 """Small reusable layout blocks and shared component settings."""
+
 from typing import Any
 
 from dash import dcc, html
@@ -19,7 +20,7 @@ PERSIST: Any = {"persistence": True, "persistence_type": "session"}
 
 
 def card(children, title: str | None = None, subtitle: str | None = None, className: str = "") -> html.Div:
-    head = []
+    head: list[Any] = []
     if title:
         head.append(html.H3(title, className="card-title"))
     if subtitle:
@@ -29,8 +30,9 @@ def card(children, title: str | None = None, subtitle: str | None = None, classN
 
 def control(label: str, component, description: str = "") -> html.Div:
     """Labelled control; `description` is shown when hovering the label."""
-    return html.Div([html.Label(label, className="control-label", title=description or None), component],
-                    className="control")
+    return html.Div(
+        [html.Label(label, className="control-label", title=description or None), component], className="control"
+    )
 
 
 def kpi(label: str, value_id: str, sub_id: str | None = None, description: str = "") -> html.Div:

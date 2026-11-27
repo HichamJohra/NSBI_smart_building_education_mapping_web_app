@@ -1,4 +1,5 @@
 """Plotly figure builders shared by the pages (pure functions: DataFrame in -> go.Figure out)."""
+
 from __future__ import annotations
 
 import math
@@ -22,10 +23,17 @@ GRID: dict = dict(gridcolor="#e5e8ee", zerolinecolor="#c8ccd4")
 
 def empty_figure(message: str, height: int | None = 400) -> go.Figure:
     fig = go.Figure()
-    fig.add_annotation(text=message, showarrow=False, font=dict(size=15, color="#555"),
-                       xref="paper", yref="paper", x=0.5, y=0.5)
-    fig.update_layout(height=height, xaxis_visible=False, yaxis_visible=False,
-                      plot_bgcolor="white", paper_bgcolor="white", margin=dict(l=10, r=10, t=10, b=10))
+    fig.add_annotation(
+        text=message, showarrow=False, font=dict(size=15, color="#555"), xref="paper", yref="paper", x=0.5, y=0.5
+    )
+    fig.update_layout(
+        height=height,
+        xaxis_visible=False,
+        yaxis_visible=False,
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        margin=dict(l=10, r=10, t=10, b=10),
+    )
     return fig
 
 
@@ -103,10 +111,19 @@ def _locations(df: pd.DataFrame, color_col: str | None) -> pd.DataFrame:
     for (lat, lon), sub in d.groupby(["_lat", "_lon"], sort=False):
         institutions = list(dict.fromkeys(sub["institution"].dropna())) if "institution" in sub else []
         place = ", ".join(str(sub.iloc[0][k]) for k in ("city", "country") if k in sub and pd.notna(sub.iloc[0][k]))
-        lines = [f"<b>{'; '.join(institutions) or 'Unknown institution'}</b>", place,
-                 f"{len(sub)} offer{'s' if len(sub) != 1 else ''}:"]
-        lines += [f"• {_shorten(f'{r.short_name} — {r.title}' if isinstance(r.title, str) else r.short_name, 70)}"
-                  for r in sub.head(MAX_LISTED).itertuples()] if "title" in sub else []
+        lines = [
+            f"<b>{'; '.join(institutions) or 'Unknown institution'}</b>",
+            place,
+            f"{len(sub)} offer{'s' if len(sub) != 1 else ''}:",
+        ]
+        lines += (
+            [
+                f"• {_shorten(f'{r.short_name} — {r.title}' if isinstance(r.title, str) else r.short_name, 70)}"
+                for r in sub.head(MAX_LISTED).itertuples()
+            ]
+            if "title" in sub
+            else []
+        )
         if len(sub) > MAX_LISTED:
             lines.append(f"… and {len(sub) - MAX_LISTED} more")
         color_value = None
@@ -118,20 +135,39 @@ def _locations(df: pd.DataFrame, color_col: str | None) -> pd.DataFrame:
                 vc = sub[color_col].dropna().astype(str).value_counts()
                 color_value = vc.index[0] if len(vc) else None
                 lines.append(f"{label(color_col, with_unit=False)} (most frequent): {color_value or 'n/a'}")
-        rows.append({"latitude": lat, "longitude": lon, "n": len(sub), "ids": "|".join(sub[ID]),
-                     "text": "<br>".join(x for x in lines if x), "color": color_value})
+        rows.append(
+            {
+                "latitude": lat,
+                "longitude": lon,
+                "n": len(sub),
+                "ids": "|".join(sub[ID]),
+                "text": "<br>".join(x for x in lines if x),
+                "color": color_value,
+            }
+        )
     return pd.DataFrame(rows)
 
 
-def map_figure(df: pd.DataFrame, size_col: str | None, color_col: str | None, basemap: str = "carto-positron",
-               colorscale: str = "Viridis", per_location: bool = False, height: int = 620) -> go.Figure:
+def map_figure(
+    df: pd.DataFrame,
+    size_col: str | None,
+    color_col: str | None,
+    basemap: str = "carto-positron",
+    colorscale: str = "Viridis",
+    per_location: bool = False,
+    height: int = 620,
+) -> go.Figure:
     """Bubble map of the offers. per_location=True draws one bubble per place (size = number of offers);
     otherwise one bubble per offer, offers at the same place being spread slightly around it.
     customdata holds the course id(s) of each bubble ('id1|id2' for a place)."""
     df = df.dropna(subset=["latitude", "longitude"])
     if df.empty:
-        return empty_figure("No offers to show: the dataset is empty or no offer matches the filters."
-                            if len(get_data().courses) else "The dataset has no offers yet.", height)
+        return empty_figure(
+            "No offers to show: the dataset is empty or no offer matches the filters."
+            if len(get_data().courses)
+            else "The dataset has no offers yet.",
+            height,
+        )
     if per_location:
         loc = _locations(df, color_col)
         lat, lon = loc["latitude"].to_numpy(float), loc["longitude"].to_numpy(float)
@@ -148,21 +184,43 @@ def map_figure(df: pd.DataFrame, size_col: str | None, color_col: str | None, ba
     fig = go.Figure()
 
     def add(mask, marker, name, showlegend=True):
-        fig.add_trace(go.Scattermap(lat=lat[mask], lon=lon[mask], customdata=custom[mask], hovertext=texts[mask],
-                                    hovertemplate="%{hovertext}<extra></extra>", mode="markers",
-                                    marker=marker, name=name, showlegend=showlegend))
+        fig.add_trace(
+            go.Scattermap(
+                lat=lat[mask],
+                lon=lon[mask],
+                customdata=custom[mask],
+                hovertext=texts[mask],
+                hovertemplate="%{hovertext}<extra></extra>",
+                mode="markers",
+                marker=marker,
+                name=name,
+                showlegend=showlegend,
+            )
+        )
 
-    if colors is not None and is_numeric(color_col):
+    if colors is not None and color_col and is_numeric(color_col):
         vals = pd.to_numeric(colors, errors="coerce").to_numpy(float)
         has = ~np.isnan(vals)
         if has.any():
-            add(has, dict(size=sizes[has], color=vals[has], colorscale=colorscale, opacity=0.85,
-                          colorbar=dict(title=dict(text=f"<b>{label(color_col)}</b>", side="right"),
-                                        tickfont=dict(weight="bold"), thickness=14)),
-                label(color_col, with_unit=False), showlegend=False)
+            add(
+                has,
+                dict(
+                    size=sizes[has],
+                    color=vals[has],
+                    colorscale=colorscale,
+                    opacity=0.85,
+                    colorbar=dict(
+                        title=dict(text=f"<b>{label(color_col)}</b>", side="right"),
+                        tickfont=dict(weight="bold"),
+                        thickness=14,
+                    ),
+                ),
+                label(color_col, with_unit=False),
+                showlegend=False,
+            )
         if (~has).any():
             add(~has, dict(size=sizes[~has], color=NA_GREY, opacity=0.8), "n/a")
-    elif colors is not None:
+    elif colors is not None and color_col:
         groups = colors.fillna("n/a").astype(str).to_numpy()
         palette = category_colors(color_col)
         order = [v for v in palette if v in set(groups)] + sorted(set(groups) - set(palette))
@@ -170,14 +228,25 @@ def map_figure(df: pd.DataFrame, size_col: str | None, color_col: str | None, ba
             m = groups == g
             add(m, dict(size=sizes[m], color=palette.get(g, NA_GREY), opacity=0.85), g)
     else:
-        add(np.ones(len(lat), bool), dict(size=sizes, color=ACCENT, opacity=0.8),
-            "Places" if per_location else "Offers", showlegend=False)
+        add(
+            np.ones(len(lat), bool),
+            dict(size=sizes, color=ACCENT, opacity=0.8),
+            "Places" if per_location else "Offers",
+            showlegend=False,
+        )
     center, zoom = _auto_view(lat, lon)
     fig.update_layout(
         map=dict(style=basemap, center=center, zoom=zoom),
-        height=height, margin=dict(l=0, r=0, t=0, b=0),
-        legend=dict(title=dict(text=label(color_col, with_unit=False) if color_col else ""),
-                    bgcolor="rgba(255,255,255,0.85)", x=0.01, y=0.99, xanchor="left", yanchor="top"),
+        height=height,
+        margin=dict(l=0, r=0, t=0, b=0),
+        legend=dict(
+            title=dict(text=label(color_col, with_unit=False) if color_col else ""),
+            bgcolor="rgba(255,255,255,0.85)",
+            x=0.01,
+            y=0.99,
+            xanchor="left",
+            yanchor="top",
+        ),
         uirevision=f"{size_col}-{color_col}-{per_location}",  # keep zoom when only the filters change
     )
     return fig
@@ -201,20 +270,43 @@ def count_bars(df: pd.DataFrame, by: str | None, split: str | None = None) -> go
         cols = [v for v in palette if v in table.columns] + [v for v in table.columns if v not in palette]
         for g in cols:
             vals = table[g].reindex(order).fillna(0)
-            fig.add_trace(go.Bar(y=order, x=vals, name=g, orientation="h", marker_color=palette.get(g, NA_GREY),
-                                 hovertemplate=f"%{{y}}<br>{g}: %{{x}} offers<extra></extra>"))
-        fig.update_layout(barmode="stack", legend=dict(title=dict(text=label(split, with_unit=False)),
-                                                       orientation="h", y=-0.12 - 60 / height, x=0))
+            fig.add_trace(
+                go.Bar(
+                    y=order,
+                    x=vals,
+                    name=g,
+                    orientation="h",
+                    marker_color=palette.get(g, NA_GREY),
+                    hovertemplate=f"%{{y}}<br>{g}: %{{x}} offers<extra></extra>",
+                )
+            )
+        fig.update_layout(
+            barmode="stack",
+            legend=dict(title=dict(text=label(split, with_unit=False)), orientation="h", y=-0.12 - 60 / height, x=0),
+        )
         height += 60
     else:
         counts = long.value_counts().reindex(order)
-        fig.add_trace(go.Bar(y=order, x=counts, orientation="h", marker_color=ACCENT, text=counts,
-                             textposition="outside", cliponaxis=False,
-                             hovertemplate="%{y}: %{x} offers<extra></extra>"))
-    fig.update_layout(height=height, plot_bgcolor="white", paper_bgcolor="white",
-                      margin=dict(l=10, r=30, t=10, b=40),
-                      xaxis=dict(title=dict(text="Number of offers"), **GRID),
-                      yaxis=dict(autorange="reversed", automargin=True))
+        fig.add_trace(
+            go.Bar(
+                y=order,
+                x=counts,
+                orientation="h",
+                marker_color=ACCENT,
+                text=counts,
+                textposition="outside",
+                cliponaxis=False,
+                hovertemplate="%{y}: %{x} offers<extra></extra>",
+            )
+        )
+    fig.update_layout(
+        height=height,
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        margin=dict(l=10, r=30, t=10, b=40),
+        xaxis=dict(title=dict(text="Number of offers"), **GRID),
+        yaxis=dict(autorange="reversed", automargin=True),
+    )
     return fig
 
 
@@ -228,11 +320,26 @@ def compare_bars(df: pd.DataFrame, col: str | None, height: int = 340) -> go.Fig
     names = df["short_name"].astype(str).tolist()
     colors = [NA_GREY if pd.isna(v) else PALETTE[i % len(PALETTE)] for i, v in enumerate(vals)]
     text = [fmt(col, v) for v in vals]
-    fig = go.Figure(go.Bar(x=vals.fillna(0), y=names, orientation="h", marker_color=colors, text=text,
-                           textposition="outside", cliponaxis=False, hovertemplate="%{y}: %{text}<extra></extra>"))
-    fig.update_layout(height=max(height, 50 * len(names) + 80), plot_bgcolor="white", paper_bgcolor="white",
-                      margin=dict(l=10, r=60, t=10, b=40), xaxis=dict(title=dict(text=label(col)), **GRID),
-                      yaxis=dict(autorange="reversed", automargin=True))
+    fig = go.Figure(
+        go.Bar(
+            x=vals.fillna(0),
+            y=names,
+            orientation="h",
+            marker_color=colors,
+            text=text,
+            textposition="outside",
+            cliponaxis=False,
+            hovertemplate="%{y}: %{text}<extra></extra>",
+        )
+    )
+    fig.update_layout(
+        height=max(height, 50 * len(names) + 80),
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        margin=dict(l=10, r=60, t=10, b=40),
+        xaxis=dict(title=dict(text=label(col)), **GRID),
+        yaxis=dict(autorange="reversed", automargin=True),
+    )
     return fig
 
 
@@ -246,11 +353,22 @@ def points_map(df: pd.DataFrame, height: int | None = 420) -> go.Figure:
     texts = hover_text(d, [])
     fig = go.Figure()
     for i, r in enumerate(d.to_dict("records")):
-        fig.add_trace(go.Scattermap(lat=[lat[i]], lon=[lon[i]], mode="markers", name=str(r["short_name"]),
-                                    marker=dict(size=16, color=PALETTE[pos[r[ID]] % len(PALETTE)]),
-                                    hovertext=[texts[i]], hovertemplate="%{hovertext}<extra></extra>"))
+        fig.add_trace(
+            go.Scattermap(
+                lat=[lat[i]],
+                lon=[lon[i]],
+                mode="markers",
+                name=str(r["short_name"]),
+                marker=dict(size=16, color=PALETTE[pos[r[ID]] % len(PALETTE)]),
+                hovertext=[texts[i]],
+                hovertemplate="%{hovertext}<extra></extra>",
+            )
+        )
     center, zoom = _auto_view(lat, lon)
-    fig.update_layout(map=dict(style="carto-positron", center=center, zoom=min(zoom, 11)), height=height,
-                      margin=dict(l=0, r=0, t=0, b=0),
-                      legend=dict(bgcolor="rgba(255,255,255,0.85)", x=0.01, y=0.99, xanchor="left", yanchor="top"))
+    fig.update_layout(
+        map=dict(style="carto-positron", center=center, zoom=min(zoom, 11)),
+        height=height,
+        margin=dict(l=0, r=0, t=0, b=0),
+        legend=dict(bgcolor="rgba(255,255,255,0.85)", x=0.01, y=0.99, xanchor="left", yanchor="top"),
+    )
     return fig

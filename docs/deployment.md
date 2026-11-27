@@ -72,8 +72,8 @@ The command prints the service URL (`https://nsbi-smart-building-education-….r
 `--min-instances 0` costs nothing when idle; the first visit after a pause then takes a few seconds (cold start).
 Use `--memory 1Gi` if the logs show out-of-memory restarts. Logs: Cloud Console → Cloud Run → service → Logs.
 
-`requirements.txt` pins the versions tested locally; after upgrading packages in the `.venv`, test, then update
-the pinned versions before redeploying.
+`uv.lock` pins the exact versions of all dependencies (the Docker image is built with `uv sync --locked`). Upgrade with
+`uv lock --upgrade`, run the tests, then commit `pyproject.toml` and `uv.lock` together.
 
 If a *Contribute* page is added later (as in the NSBI Smart Building Mapping app), contributions must be written to a
 private Cloud Storage bucket mounted in the container (Cloud Run's own disk is temporary); see that app's

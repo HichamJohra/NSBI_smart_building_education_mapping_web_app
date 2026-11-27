@@ -18,7 +18,7 @@ signatures, docstrings, callback inputs/outputs, callers and callees.
 Run from the project root after code changes (static analysis only; the app is not executed):
 
 ```
-.venv\Scripts\python.exe docs/project_graph_explorer/build_project_explorer.py
+uv run python docs/project_graph_explorer/build_project_explorer.py
 ```
 
 Optional arguments:

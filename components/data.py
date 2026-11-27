@@ -12,6 +12,7 @@ dtype values:
 The sheet 'vocabulary' lists the harmonised values of categorical and multi-valued columns with a
 description; it sets the order of the values in filters and charts and their hover texts.
 """
+
 from __future__ import annotations
 
 import datetime as dt
@@ -35,11 +36,45 @@ ONLINE_MODES = {"Online", "Hybrid", "Blended"}  # delivery modes that can be fol
 # Region filled in automatically from the country when the 'region' cell is empty
 NORDIC = {"Denmark", "Finland", "Iceland", "Norway", "Sweden", "Faroe Islands", "Greenland", "Åland"}
 BALTIC = {"Estonia", "Latvia", "Lithuania"}
-EUROPE = {"Albania", "Andorra", "Austria", "Belarus", "Belgium", "Bosnia and Herzegovina", "Bulgaria", "Croatia",
-          "Cyprus", "Czech Republic", "Czechia", "France", "Germany", "Greece", "Hungary", "Ireland", "Italy",
-          "Kosovo", "Liechtenstein", "Luxembourg", "Malta", "Moldova", "Monaco", "Montenegro", "Netherlands",
-          "North Macedonia", "Poland", "Portugal", "Romania", "San Marino", "Serbia", "Slovakia", "Slovenia",
-          "Spain", "Switzerland", "Ukraine", "United Kingdom"}
+EUROPE = {
+    "Albania",
+    "Andorra",
+    "Austria",
+    "Belarus",
+    "Belgium",
+    "Bosnia and Herzegovina",
+    "Bulgaria",
+    "Croatia",
+    "Cyprus",
+    "Czech Republic",
+    "Czechia",
+    "France",
+    "Germany",
+    "Greece",
+    "Hungary",
+    "Ireland",
+    "Italy",
+    "Kosovo",
+    "Liechtenstein",
+    "Luxembourg",
+    "Malta",
+    "Moldova",
+    "Monaco",
+    "Montenegro",
+    "Netherlands",
+    "North Macedonia",
+    "Poland",
+    "Portugal",
+    "Romania",
+    "San Marino",
+    "Serbia",
+    "Slovakia",
+    "Slovenia",
+    "Spain",
+    "Switzerland",
+    "Ukraine",
+    "United Kingdom",
+}
 
 
 @dataclass
@@ -117,8 +152,10 @@ def get_data() -> Dataset:
     mtime = DATA_FILE.stat().st_mtime
     if _cache is None or _cache.mtime != mtime:
         sheets = pd.read_excel(DATA_FILE, sheet_name=None)
-        d = sheets.get("data_dictionary",
-                       pd.DataFrame(columns=["column", "label", "unit", "group", "dtype", "description", "hover"]))
+        d = sheets.get(
+            "data_dictionary",
+            pd.DataFrame(columns=["column", "label", "unit", "group", "dtype", "description", "hover"]),
+        )
         d = d[d["column"].notna()].fillna("").copy()
         d["dtype"] = d["dtype"].astype(str).str.strip().str.lower()
         courses = _prepare(sheets.get("courses", pd.DataFrame(columns=[ID])), d)
@@ -126,10 +163,13 @@ def get_data() -> Dataset:
         v = sheets.get("vocabulary", pd.DataFrame(columns=["column", "value", "description"]))
         v = v[v["column"].notna() & v["value"].notna()].fillna("").copy()
         v["value"] = v["value"].map(_as_text)
-        _cache = Dataset(courses=courses, dictionary=d, vocabulary=v.reset_index(drop=True),
-                         sources=sheets.get("sources", pd.DataFrame(columns=["source_id", "reference", "url",
-                                                                             "used_for"])),
-                         mtime=mtime)
+        _cache = Dataset(
+            courses=courses,
+            dictionary=d,
+            vocabulary=v.reset_index(drop=True),
+            sources=sheets.get("sources", pd.DataFrame(columns=["source_id", "reference", "url", "used_for"])),
+            mtime=mtime,
+        )
     return _cache
 
 
@@ -217,8 +257,12 @@ def columns_for(use: str, kind: str | None = None, include_empty: bool = False) 
         if "hover" not in d.columns:
             return []
         return d.loc[d["hover"].astype(str).str.upper().str.strip() == "Y", "column"].tolist()
-    accepted = {"numeric": ("numeric",), "categorical": FILTER_DTYPES, "single": ("categorical",),
-                None: ("numeric",) + FILTER_DTYPES}[kind]
+    accepted = {
+        "numeric": ("numeric",),
+        "categorical": FILTER_DTYPES,
+        "single": ("categorical",),
+        None: ("numeric", *FILTER_DTYPES),
+    }[kind]
     return [c for c in all_columns() if dtype(c) in accepted and (include_empty or has_data(c))]
 
 
@@ -237,8 +281,9 @@ def dropdown_options(cols: list[str]) -> list[Any]:
         empty = not has_data(c)
         if empty:
             text += " (no data yet)"
-        opts.append({"label": hover_label(text, tooltip(c)), "value": c, "search": f"{text} {c}",
-                     "disabled": empty})  # empty parameters are listed but cannot be selected
+        opts.append(
+            {"label": hover_label(text, tooltip(c)), "value": c, "search": f"{text} {c}", "disabled": empty}
+        )  # empty parameters are listed but cannot be selected
     return opts
 
 
@@ -280,8 +325,9 @@ def value_options(col: str | None) -> list[Any]:
     opts = []
     for val, n in counts.items():
         desc = value_description(col, val)
-        opts.append({"label": hover_label(f"{val} ({n})", f"{val}\n{desc}" if desc else val), "value": val,
-                     "search": val})
+        opts.append(
+            {"label": hover_label(f"{val} ({n})", f"{val}\n{desc}" if desc else val), "value": val, "search": val}
+        )
     return opts
 
 
@@ -318,10 +364,16 @@ def offer_options() -> list[Any]:
     opts = []
     for r in c.to_dict("records"):
         text = f"{r['short_name']} — {r.get('title') or ''}".rstrip(" —")
-        details = " · ".join(str(r[k]) for k in ("offer_type", "institution", "city", "level")
-                             if isinstance(r.get(k), str) and r.get(k))
-        opts.append({"label": hover_label(text, details or text), "value": r[ID],
-                     "search": f"{text} {r.get('institution') or ''} {r.get('city') or ''}"})
+        details = " · ".join(
+            str(r[k]) for k in ("offer_type", "institution", "city", "level") if isinstance(r.get(k), str) and r.get(k)
+        )
+        opts.append(
+            {
+                "label": hover_label(text, details or text),
+                "value": r[ID],
+                "search": f"{text} {r.get('institution') or ''} {r.get('city') or ''}",
+            }
+        )
     return opts
 
 
