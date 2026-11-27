@@ -2,6 +2,7 @@
 
 Run locally:  python app.py   ->  http://127.0.0.1:8050
 """
+
 import dash
 from dash import Dash, dcc, html
 
@@ -25,12 +26,18 @@ LOGOS = [
 
 def navbar() -> html.Header:
     links = [
-        dcc.Link(page["name"], href=page["relative_path"], className="nav-link")
-        for page in dash.page_registry.values()
+        dcc.Link(page["name"], href=page["relative_path"], className="nav-link") for page in dash.page_registry.values()
     ]
-    logos = [html.A(html.Img(src=app.get_asset_url(path), alt=name, className="nav-logo"),
-                    href=url, target="_blank", rel="noopener noreferrer", title=f"{name} – {url}")
-             for path, name, url in LOGOS]
+    logos = [
+        html.A(
+            html.Img(src=app.get_asset_url(path), alt=name, className="nav-logo"),
+            href=url,
+            target="_blank",
+            rel="noopener noreferrer",
+            title=f"{name} – {url}",
+        )
+        for path, name, url in LOGOS
+    ]
     return html.Header(
         className="navbar",
         children=[
@@ -46,12 +53,14 @@ def navbar() -> html.Header:
 #                   restore them)
 #   mem-cmp-ids     the offers selected for comparison (filled from the Overview, edited on the Compare page)
 # Simple dropdowns use Dash persistence (components.ui.PERSIST), which uses the same sessionStorage.
-app.layout = html.Div([
-    dcc.Store(id="mem-db-filters", storage_type="session"),
-    dcc.Store(id="mem-cmp-ids", storage_type="session"),
-    navbar(),
-    html.Main(dash.page_container, className="container"),
-])
+app.layout = html.Div(
+    [
+        dcc.Store(id="mem-db-filters", storage_type="session"),
+        dcc.Store(id="mem-cmp-ids", storage_type="session"),
+        navbar(),
+        html.Main(dash.page_container, className="container"),
+    ]
+)
 
 
 if __name__ == "__main__":

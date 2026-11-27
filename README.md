@@ -10,14 +10,20 @@ technologies, from an embedded Excel dataset. Companion of the
 **Live app:** <https://nsbi-smart-building-education-mapping.cloud.run> (Google Cloud Run, redeployed automatically
 from the `main` branch; see `docs/deployment.md`).
 
+[![CI](https://github.com/HichamJohra/NSBI_smart_building_education_mapping_web_app/actions/workflows/ci.yml/badge.svg)](https://github.com/HichamJohra/NSBI_smart_building_education_mapping_web_app/actions/workflows/ci.yml)
+
 ## Run locally
 
+With [uv](https://docs.astral.sh/uv/) (Python 3.11–3.14):
+
 ```bash
-python -m venv .venv
-.venv\Scripts\activate        # Windows  (macOS/Linux: source .venv/bin/activate)
-pip install -r requirements.txt
-python app.py                 # -> http://127.0.0.1:8050
+uv sync                       # create .venv with the exact versions of uv.lock
+uv run python app.py          # -> http://127.0.0.1:8050
+uv run pytest                 # tests
+uv run pre-commit run -a      # code checks (Ruff, mypy, ...)
 ```
+
+See [docs/development.md](docs/development.md) for the full setup, the tests and the CI workflow.
 
 ## Project structure
 
@@ -34,7 +40,10 @@ python app.py                 # -> http://127.0.0.1:8050
 | `assets/dashAgGridComponentFunctions.js` | Table cell renderer for web links |
 | `assets/favicon.ico`, `assets/logos/` | SINTEF browser-tab icon; SINTEF and IBPSA Nordic logos (top right of every page); NSBI logo (About page) |
 | `data/smart_building_education_dataset.xlsx` | The dataset |
-| `Dockerfile`, `.dockerignore` | Container image for Docker / Google Cloud Run (see `docs/deployment.md`) |
+| `tests/` | pytest suite: dataset integrity (ids, coordinates, dictionary, vocabulary, links, dates) and app pages and callbacks |
+| `pyproject.toml`, `uv.lock`, `.python-version` | Dependencies (exact versions in `uv.lock`) and settings of Ruff, mypy, pytest |
+| `.pre-commit-config.yaml`, `.github/workflows/ci.yml` | Code checks before each commit; CI on GitHub (checks + tests on Python 3.11–3.14 and Windows) |
+| `Dockerfile`, `.dockerignore` | Container image for Docker / Google Cloud Run, built with uv (see `docs/deployment.md`) |
 | `docs/` | Documentation: architecture, data model, development, deployment |
 | `docs/project_graph_explorer/` | Interactive HTML map of the code + script to regenerate it |
 
@@ -45,7 +54,7 @@ callback inputs/outputs, open `docs/project_graph_explorer/NSBI_education_projec
 Regenerate it after code changes:
 
 ```bash
-.venv\Scripts\python.exe docs/project_graph_explorer/build_project_explorer.py
+uv run python docs/project_graph_explorer/build_project_explorer.py
 ```
 
 ## Dataset
